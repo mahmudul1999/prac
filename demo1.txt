@@ -1,14 +1,3 @@
-rm(list=ls())
-library(FactoMineR) # MFA
-library(nFactors) # parallel
-library(psych) # fa
-library(cluster) # clusGap
-library(ROSE) # ROSE
-library(rpart) # rpart
-library(caret) # confusionMatrix
-
-# 1. no. question FA
-
 data("wine")
 wine
 fit1 = MFA(wine, group=c(2,5,3,10,9,2), type=c("n",rep("s",5)),
@@ -27,10 +16,7 @@ ev = eigen(cor(x))
 ap = parallel(subject = nrow(x), var = ncol(x))
 plotnScree(nScree(x = ev$values, aparallel = ap$eigen$qevpea))
 
-
-
-
-# 2 no. question KM
+##KM
 
 data("iris")
 attach(iris)
@@ -61,7 +47,7 @@ gap = clusGap(iris[-5], FUNcluster = kmeans, K.max = 10)
 dev.new()
 plot(gap)
 
-#3 no question Balancing Data
+### Balancing Data
 
 data(hacide)
 
@@ -120,3 +106,25 @@ confusionMatrix(hacide.test$cls, y_pred_under, positive = '1')
 confusionMatrix(hacide.test$cls, y_pred_over, positive = '1')
 confusionMatrix(hacide.test$cls, y_pred_both, positive = '1')
 confusionMatrix(hacide.test$cls, y_pred_rose, positive = '1')
+
+####
+
+set.seed(110)
+library(MASS)
+head(iris)
+rdata = iris
+dim(iris)
+index <- sample(1:150,105,replace = FALSE)
+s.ind <- sort(index);s.ind
+train=iris[s.ind,]
+test=iris[-s.ind,]
+d=lda(train[,-5],train[,5])
+d
+predicted_class=predict(d,test[,-5])$class
+predicted_class
+Compare_class<-cbind(test[,5],predicted_class)
+Compare_class
+tab1=table(test[,5],predicted_class)
+tab1
+misclassification.rate<-1-sum(diag(tab1))/sum(tab1)
+misclassification.rate
